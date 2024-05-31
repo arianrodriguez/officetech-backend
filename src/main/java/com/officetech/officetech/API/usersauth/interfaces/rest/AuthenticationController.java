@@ -7,8 +7,10 @@ package com.officetech.officetech.API.usersauth.interfaces.rest;
 * */
 
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
+import com.officetech.officetech.API.usersauth.domain.model.queries.AuthUserQuery;
 import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEmailQuery;
 import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Email;
+import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Password;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthCommandService;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthQueryService;
 import com.officetech.officetech.API.usersauth.interfaces.rest.resources.CreateUserAuthResource;
@@ -50,8 +52,19 @@ public class AuthenticationController {
         System.out.println("Logging in user");
         GetUserByEmailQuery query = new GetUserByEmailQuery(new Email(email));
         boolean user = userAuthQueryService.handle(query);
-        if(user) return ResponseEntity.badRequest().build();
+        if(user) {
+            System.out.println("User not found");
+            return ResponseEntity.badRequest().build();
+        }
 
+        AuthUserQuery authUserQuery = new AuthUserQuery(new Email(email), new Password(password));
+        boolean resultMatch = userAuthQueryService.handle(authUserQuery);
+        if(!resultMatch) {
+            System.out.println("Password incorrect");
+            return ResponseEntity.badRequest().build();
+        }
+
+        System.out.println("Logged!");
         return ResponseEntity.ok().build();
     }
 
