@@ -7,28 +7,34 @@ package com.officetech.officetech.API.usersauth.interfaces.rest;
 * */
 
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
+import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEmailQuery;
+import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Email;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthCommandService;
+import com.officetech.officetech.API.usersauth.domain.services.UserAuthQueryService;
 import com.officetech.officetech.API.usersauth.interfaces.rest.resources.CreateUserAuthResource;
 import com.officetech.officetech.API.usersauth.interfaces.rest.resources.UserAuthResource;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.CreateUserAuthCommandFromResourceAssembler;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.UserAuthResourceFromEntityAssembler;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping(value = "/api/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Authentication", description = "Authentication Management Endpoints")
 public class AuthenticationController {
     private final UserAuthCommandService userAuthCommandService;
+    private final UserAuthQueryService userAuthQueryService;
 
-    public AuthenticationController(UserAuthCommandService userAuthCommandService) {
+    public AuthenticationController(UserAuthCommandService userAuthCommandService, UserAuthQueryService userAuthQueryService) {
         this.userAuthCommandService = userAuthCommandService;
+        this.userAuthQueryService = userAuthQueryService;
     }
 
     @PostMapping("/register")
@@ -37,6 +43,16 @@ public class AuthenticationController {
         Optional<UserAuth> user = userAuthCommandService.handle(CreateUserAuthCommandFromResourceAssembler.toCommandFromResource(resource));
 
         return user.map(source -> new ResponseEntity<>(UserAuthResourceFromEntityAssembler.toResourceFromEntity(source), CREATED)).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<UserAuthResource> existsUser(String email, String password) {
+        System.out.println("Logging in user");
+        GetUserByEmailQuery query = new GetUserByEmailQuery(new Email(email));
+        boolean user = userAuthQueryService.handle(query);
+        if(user) return ResponseEntity.badRequest().build();
+
+        return ResponseEntity.ok().build();
     }
 
 }
