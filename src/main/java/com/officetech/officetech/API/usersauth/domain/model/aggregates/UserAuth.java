@@ -6,7 +6,13 @@ package com.officetech.officetech.API.usersauth.domain.model.aggregates;
 * It is responsible for handling the CreateUserCommand command.</p>
 * */
 
+import com.officetech.officetech.API.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.officetech.officetech.API.usersauth.domain.model.commands.CreateUserAuthCommand;
+import com.officetech.officetech.API.usersauth.domain.model.commands.GetUserAuthCommand;
+import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEmailQuery;
+import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Email;
+import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Password;
+import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,29 +22,40 @@ import java.util.Date;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) // it is used to automatically populate the createdAt and updatedAt fields
-public class UserAuth {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    private Long id;
+public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
 
-    @Column(nullable = false)
-    @Getter
-    private String email;
+    @Embedded
+    private Email email;
 
-    @Column(nullable = false)
-    @Getter
-    private String password;
+    @Embedded
+    private Password password;
 
-    @Column(nullable = false)
-    @Getter
-    private String role;
+    @Embedded
+    private Role role;
 
     protected UserAuth() {}
+    public UserAuth(String email, String password, String role) {
+        this.email = new Email(email);
+        this.password = new Password(password);
+        this.role = new Role(role);
+        this.setCreatedAt();
+        this.setUpdatedAt();
+    }
     public UserAuth(CreateUserAuthCommand command) {
         System.out.println("UserAuth: creating new user entity aggregate");
-        this.email = command.email();
-        this.password = command.password();
-        this.role = command.role();
+        this.email = new Email(command.email());
+        this.password = new Password(command.password());
+        this.role = new Role(command.role());
+        this.setCreatedAt();
+        this.setUpdatedAt();
     }
+    public UserAuth(GetUserByEmailQuery query) {
+        this.email = query.email();
+    }
+
+
+    public String getRole() {return role.getRole();}
+    public String getEmail() {return email.getEmail();}
+    public String getPassword() {return password.getPassword();}
+    public Email getEmailObject() {return email;}
 }
