@@ -7,6 +7,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
@@ -23,12 +24,13 @@ public class ServiceOfficeTech extends AuditableAbstractAggregateRoot<ServiceOff
     private Date date;
     @Embedded
     private Status statusValue;
-
+    @Setter
     private String status;
     @Embedded
     private Comment comment;
     private Long companyId;
     private Long technicianId;
+    @Setter
     private Integer rating;
 
     public ServiceOfficeTech() {
@@ -72,5 +74,13 @@ public class ServiceOfficeTech extends AuditableAbstractAggregateRoot<ServiceOff
     }
     public boolean isActive() {
         return this.statusValue == Status.ACTIVE;
+    }
+
+    public void setComment(String comment) {
+        this.comment = new Comment(comment);
+    }
+    public void setStatusValue(String status) {
+        this.status = status;
+        this.statusValue = Status.valueOf(status.toUpperCase().replace(" ", "_"));
     }
 }
