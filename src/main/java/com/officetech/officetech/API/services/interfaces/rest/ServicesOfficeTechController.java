@@ -2,6 +2,7 @@ package com.officetech.officetech.API.services.interfaces.rest;
 
 import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
 import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByCompanyIdQuery;
+import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByTechnicianId;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechCommandService;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechQueryService;
 import com.officetech.officetech.API.services.interfaces.rest.resources.CreateNewServiceOfficeTechResource;
@@ -102,6 +103,30 @@ public class ServicesOfficeTechController {
     @GetMapping("/company/completed/{companyId}")
     public List<ServiceOfficeTech> getCompletedServicesCompany(@PathVariable Long companyId) {
         var query = new GetServicesOfficeTechByCompanyIdQuery(companyId);
+        return serviceOfficeTechQueryService.handle(query, 2);
+    }
+
+    /**
+     * GET api/v1/services/technician/active/{technicianId}
+     * Endpoint to obtain the services of a technician that requested them with status service IN PROGRESS, ACTIVE
+     * @param technicianId id of the company to get the services
+     *
+     * */
+    @GetMapping("/technician/active/{technicianId}")
+    public List<ServiceOfficeTech> getActiveServicesTechnician(@PathVariable Long technicianId) {
+        var query = new GetServicesOfficeTechByTechnicianId(technicianId);
+        return serviceOfficeTechQueryService.handle(query, 1);
+    }
+
+    /**
+     * GET api/v1/services/technician/active/{technicianId}
+     * Endpoint to obtain the services of a technician that requested them with status service CANCELLED OR COMPLETED
+     * @param technicianId id of the company to get the services
+     *
+     * */
+    @GetMapping("/technician/completed/{technicianId}")
+    public List<ServiceOfficeTech> getCompletedServicesTechnician(@PathVariable Long technicianId) {
+        var query = new GetServicesOfficeTechByTechnicianId(technicianId);
         return serviceOfficeTechQueryService.handle(query, 2);
     }
 }
