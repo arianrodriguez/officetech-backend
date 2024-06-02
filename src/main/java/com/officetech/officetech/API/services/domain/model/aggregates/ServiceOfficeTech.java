@@ -8,37 +8,34 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Entity
 @EntityListeners(AuditingEntityListener.class) // it is used to automatically populate the createdAt and updatedAt fields
 public class ServiceOfficeTech extends AuditableAbstractAggregateRoot<ServiceOfficeTech> {
-    @Embedded
-    private Title title;
-    @Embedded
-    private Description description;
-    @Embedded
-    private Pricing estimatePricing;
-    @Embedded
-    private Date date;
-    @Embedded
+
+    private String title;
+    private String description;
+    private Float estimatePricing;
+    private String date;
     private Status statusValue;
     @Setter
     private String status;
-    @Embedded
-    private Comment comment;
+    @Setter
+    private String comment;
     private Long companyId;
     private Long technicianId;
     @Setter
     private Integer rating;
 
     public ServiceOfficeTech() {
-        this.title = new Title();
-        this.description = new Description();
-        this.estimatePricing = new Pricing();
-        this.date = new Date();
-        this.comment = new Comment();
+        this.title = Strings.EMPTY;
+        this.description = Strings.EMPTY;
+        this.estimatePricing = (float) 0;
+        this.date = Strings.EMPTY;
+        this.comment = Strings.EMPTY;
         this.status = "In Progress";
         this.statusValue = Status.IN_PROGRESS;
         this.companyId = 0L;
@@ -49,13 +46,13 @@ public class ServiceOfficeTech extends AuditableAbstractAggregateRoot<ServiceOff
     }
 
     public ServiceOfficeTech(CreateNewServiceOfficeTechCommand command) {
-        this.title = new Title(command.title());
-        this.description = new Description(command.description());
-        this.estimatePricing = new Pricing(command.estimatePricing());
-        this.date = new Date(command.date());
+        this.title = command.title();
+        this.description = command.description();
+        this.estimatePricing = command.estimatePricing();
+        this.date = command.date();
         this.status = "In Progress";
         this.statusValue = Status.IN_PROGRESS;
-        this.comment = new Comment(command.comment());
+        this.comment = command.comment();
         this.companyId = command.companyId();
         this.technicianId = command.technicianId();
         this.rating = command.rating();
@@ -74,10 +71,6 @@ public class ServiceOfficeTech extends AuditableAbstractAggregateRoot<ServiceOff
     }
     public boolean isActive() {
         return this.statusValue == Status.ACTIVE;
-    }
-
-    public void setComment(String comment) {
-        this.comment = new Comment(comment);
     }
     public void setStatusValue(String status) {
         this.status = status;

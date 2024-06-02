@@ -1,6 +1,9 @@
 package com.officetech.officetech.API.services.interfaces.rest;
 
+import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
+import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByCompanyIdQuery;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechCommandService;
+import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechQueryService;
 import com.officetech.officetech.API.services.interfaces.rest.resources.CreateNewServiceOfficeTechResource;
 import com.officetech.officetech.API.services.interfaces.rest.resources.EditServiceOfficeTechResource;
 import com.officetech.officetech.API.services.interfaces.rest.transform.CreateServiceOfficeTechCommandFromResourceAssembler;
@@ -12,13 +15,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/v1/services", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Services", description = "Services Management Endpoints")
 public class ServicesOfficeTechController {
     private final ServiceOfficeTechCommandService serviceOfficeTechCommandService;
-    public ServicesOfficeTechController(ServiceOfficeTechCommandService serviceOfficeTechCommandService) {
+    private final ServiceOfficeTechQueryService serviceOfficeTechQueryService;
+    public ServicesOfficeTechController(ServiceOfficeTechCommandService serviceOfficeTechCommandService, ServiceOfficeTechQueryService serviceOfficeTechQueryService) {
         this.serviceOfficeTechCommandService = serviceOfficeTechCommandService;
+        this.serviceOfficeTechQueryService = serviceOfficeTechQueryService;
     }
 
     /**
@@ -74,4 +81,27 @@ public class ServicesOfficeTechController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * GET api/v1/services/company/active/{companyId}
+     * Endpoint to obtain the services of a company that requested them with status service IN PROGRESS, ACTIVE
+     * @param companyId id of the company to get the services
+     *
+    * */
+    @GetMapping("/company/active/{companyId}")
+    public List<ServiceOfficeTech> getActiveServicesCompany(@PathVariable Long companyId) {
+        var query = new GetServicesOfficeTechByCompanyIdQuery(companyId);
+        return serviceOfficeTechQueryService.handle(query, 1);
+    }
+
+    /**
+     * GET api/v1/services/company/active/{companyId}
+     * Endpoint to obtain the services of a company that requested them with status service CANCELLED OR COMPLETED
+     * @param companyId id of the company to get the services
+     *
+     * */
+    @GetMapping("/company/completed/{companyId}")
+    public List<ServiceOfficeTech> getCompletedServicesCompany(@PathVariable Long companyId) {
+        var query = new GetServicesOfficeTechByCompanyIdQuery(companyId);
+        return serviceOfficeTechQueryService.handle(query, 2);
+    }
 }
