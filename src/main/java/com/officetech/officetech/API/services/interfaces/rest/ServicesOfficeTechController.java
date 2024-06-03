@@ -3,11 +3,14 @@ package com.officetech.officetech.API.services.interfaces.rest;
 import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
 import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByCompanyIdQuery;
 import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByTechnicianId;
+import com.officetech.officetech.API.services.domain.model.queries.GetUserByIdQuery;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechCommandService;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechQueryService;
 import com.officetech.officetech.API.services.interfaces.rest.resources.CreateNewServiceOfficeTechResource;
 import com.officetech.officetech.API.services.interfaces.rest.resources.EditServiceOfficeTechResource;
+import com.officetech.officetech.API.services.interfaces.rest.resources.UserResource;
 import com.officetech.officetech.API.services.interfaces.rest.transform.CreateServiceOfficeTechCommandFromResourceAssembler;
+import com.officetech.officetech.API.services.interfaces.rest.transform.CreateUserResourceFromEntity;
 import com.officetech.officetech.API.services.interfaces.rest.transform.EditServiceOfficeTechCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.coyote.Response;
@@ -17,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/api/v1/services", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Services", description = "Services Management Endpoints")
@@ -128,5 +131,17 @@ public class ServicesOfficeTechController {
     public List<ServiceOfficeTech> getCompletedServicesTechnician(@PathVariable Long technicianId) {
         var query = new GetServicesOfficeTechByTechnicianId(technicianId);
         return serviceOfficeTechQueryService.handle(query, 2);
+    }
+
+    /**
+     * GET api/v1/services/user/{userId}
+     * Endpoint to obtain the user information
+     * @param userId id of the user to get the information
+    * */
+    @GetMapping("/user/{userId}")
+    public UserResource getUser(@PathVariable Long userId) {
+        var query = new GetUserByIdQuery(userId);
+        var user = serviceOfficeTechQueryService.handle(query);
+        return user.map(CreateUserResourceFromEntity::toResourceFromEntity).orElse(null);
     }
 }

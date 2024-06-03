@@ -1,14 +1,18 @@
 package com.officetech.officetech.API.services.internal.queryservices;
 
 import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
+import com.officetech.officetech.API.services.domain.model.entities.UserEntity;
 import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByCompanyIdQuery;
 import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByTechnicianId;
+import com.officetech.officetech.API.services.domain.model.queries.GetUserByIdQuery;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechQueryService;
 import com.officetech.officetech.API.services.infrastructure.persistence.repositories.ServiceOfficeTechRepository;
+import com.officetech.officetech.API.services.interfaces.rest.resources.UserResource;
 import com.officetech.officetech.API.services.internal.commandservices.ServiceOfficeTechCommandServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ServiceOfficeTechQueryServiceImpl implements ServiceOfficeTechQueryService {
@@ -40,6 +44,16 @@ public class ServiceOfficeTechQueryServiceImpl implements ServiceOfficeTechQuery
         }catch(Exception e) {
             System.out.println("Error: " + e.getMessage());
             return List.of();
+        }
+    }
+
+    @Override
+    public Optional<UserEntity> handle(GetUserByIdQuery query) {
+        try {
+            return serviceOfficeTechRepository.findUserById(query.userId());
+        }catch(Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return Optional.empty();
         }
     }
 }
