@@ -155,4 +155,21 @@ public class ServicesOfficeTechController {
         var query = new GetServicesByIdQuery(idService);
         return serviceOfficeTechQueryService.handle(query).orElse(null);
     }
+
+
+    // Endpoint para obtener servicios con información del técnico
+    @GetMapping("/company/{companyId}/services-with-technician-info")
+    public List<ServiceOfficeTech> getServicesWithTechnicianInfo(@PathVariable Long companyId) {
+        var query = new GetServicesWithTechnicianInfoQuery(companyId);
+        return serviceOfficeTechQueryService.handle(query);
+    }
+
+    // Endpoint para obtener servicios con información del técnico y calificaciones
+    @GetMapping("/company/{companyId}/services-with-technician-info-and-ratings")
+    public List<ServiceOfficeTech> getServicesWithTechnicianInfoAndRatings(@PathVariable Long companyId) {
+        var query = new GetServicesWithTechnicianInfoAndRatingsQuery(companyId);
+        return serviceOfficeTechQueryService.handle(query);
+    }
+
+
 }

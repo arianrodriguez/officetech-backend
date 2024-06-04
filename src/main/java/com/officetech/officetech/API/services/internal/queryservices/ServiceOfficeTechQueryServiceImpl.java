@@ -74,4 +74,14 @@ public class ServiceOfficeTechQueryServiceImpl implements ServiceOfficeTechQuery
             return Optional.empty();
         }
     }
+
+    @Override
+    public List<ServiceOfficeTech> handle(GetServicesWithTechnicianInfoQuery query) {
+        return serviceOfficeTechRepository.findServicesWithTechnicianInfo(query.companyId());
+    }
+
+    @Override
+    public List<ServiceOfficeTech> handle(GetServicesWithTechnicianInfoAndRatingsQuery query) {
+        return serviceOfficeTechRepository.findServicesWithTechnicianInfoAndRatings(query.companyId());
+    }
 }
