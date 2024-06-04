@@ -41,10 +41,20 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<UserAuthResource> registerNewUser(@RequestBody CreateUserAuthResource resource) {
-        System.out.println("Registering new user");
-        Optional<UserAuth> user = userAuthCommandService.handle(CreateUserAuthCommandFromResourceAssembler.toCommandFromResource(resource));
+        // to verify if the user's email already exists in the database
+        GetUserByEmailQuery query = new GetUserByEmailQuery(new Email(resource.email()));
+        boolean userExists = userAuthQueryService.handle(query);
+        if(!userExists) {
+            System.out.println("User already exists");
+            return ResponseEntity.badRequest().build();
+        }
+        else {
+            System.out.println("Registering new user");
+            Optional<UserAuth> user = userAuthCommandService.handle(CreateUserAuthCommandFromResourceAssembler.toCommandFromResource(resource));
+            return user.map(source -> new ResponseEntity<>(UserAuthResourceFromEntityAssembler.toResourceFromEntity(source), CREATED)).orElseGet(() -> ResponseEntity.badRequest().build());
+        }
 
-        return user.map(source -> new ResponseEntity<>(UserAuthResourceFromEntityAssembler.toResourceFromEntity(source), CREATED)).orElseGet(() -> ResponseEntity.badRequest().build());
+
     }
 
     @GetMapping("/login")

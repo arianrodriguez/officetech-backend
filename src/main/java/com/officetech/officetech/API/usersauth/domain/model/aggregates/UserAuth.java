@@ -10,9 +10,7 @@ import com.officetech.officetech.API.shared.domain.model.aggregates.AuditableAbs
 import com.officetech.officetech.API.usersauth.domain.model.commands.CreateUserAuthCommand;
 import com.officetech.officetech.API.usersauth.domain.model.commands.GetUserAuthCommand;
 import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEmailQuery;
-import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Email;
-import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Password;
-import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Role;
+import com.officetech.officetech.API.usersauth.domain.model.valueobjects.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,6 +23,12 @@ import java.util.Date;
 public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
 
     @Embedded
+    private FirstName firstName;
+
+    @Embedded
+    private LastName lastName;
+
+    @Embedded
     private Email email;
 
     @Embedded
@@ -34,7 +38,9 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
     private Role role;
 
     protected UserAuth() {}
-    public UserAuth(String email, String password, String role) {
+    public UserAuth(String firstName, String lastName, String email, String password, String role) {
+        this.firstName = new FirstName(firstName);
+        this.lastName = new LastName(lastName);
         this.email = new Email(email);
         this.password = new Password(password);
         this.role = new Role(role);
@@ -43,6 +49,8 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
     }
     public UserAuth(CreateUserAuthCommand command) {
         System.out.println("UserAuth: creating new user entity aggregate");
+        this.firstName = new FirstName(command.firstName());
+        this.lastName = new LastName(command.lastName());
         this.email = new Email(command.email());
         this.password = new Password(command.password());
         this.role = new Role(command.role());
@@ -53,7 +61,8 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
         this.email = query.email();
     }
 
-
+    public String getFirstName() {return firstName.getFirstName();}
+    public String getLastName() {return lastName.getLastName();}
     public String getRole() {return role.getRole();}
     public String getEmail() {return email.getEmail();}
     public String getPassword() {return password.getPassword();}

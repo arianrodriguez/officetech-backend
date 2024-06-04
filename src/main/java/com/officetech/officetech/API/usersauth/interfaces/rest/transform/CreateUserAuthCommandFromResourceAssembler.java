@@ -13,6 +13,6 @@ import com.officetech.officetech.API.usersauth.interfaces.rest.resources.CreateU
 public class CreateUserAuthCommandFromResourceAssembler {
     public static CreateUserAuthCommand toCommandFromResource(CreateUserAuthResource resource) {
         System.out.println("CreateUserAuthCommandFromResourceAssembler: converting resource to command");
-        return new CreateUserAuthCommand(resource.email(), resource.password(), resource.role());
+        return new CreateUserAuthCommand(resource.firstName(), resource.lastName(), resource.email(), resource.password(), resource.role());
     }
 }
