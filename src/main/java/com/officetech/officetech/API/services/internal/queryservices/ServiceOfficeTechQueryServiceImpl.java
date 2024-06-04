@@ -2,9 +2,7 @@ package com.officetech.officetech.API.services.internal.queryservices;
 
 import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
 import com.officetech.officetech.API.services.domain.model.entities.UserEntity;
-import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByCompanyIdQuery;
-import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByTechnicianId;
-import com.officetech.officetech.API.services.domain.model.queries.GetUserByIdQuery;
+import com.officetech.officetech.API.services.domain.model.queries.*;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechQueryService;
 import com.officetech.officetech.API.services.infrastructure.persistence.repositories.ServiceOfficeTechRepository;
 import com.officetech.officetech.API.services.interfaces.rest.resources.UserResource;
@@ -51,6 +49,26 @@ public class ServiceOfficeTechQueryServiceImpl implements ServiceOfficeTechQuery
     public Optional<UserEntity> handle(GetUserByIdQuery query) {
         try {
             return serviceOfficeTechRepository.findUserById(query.userId());
+        }catch(Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<UserEntity> handle(GetUsersTechnicianQuery query) {
+        try {
+            return serviceOfficeTechRepository.findAllTechnicians();
+        }catch(Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    @Override
+    public Optional<ServiceOfficeTech> handle(GetServicesByIdQuery query) {
+        try {
+            return serviceOfficeTechRepository.findServiceOfficeTechById(query.idService());
         }catch(Exception e) {
             System.out.println("Error: " + e.getMessage());
             return Optional.empty();

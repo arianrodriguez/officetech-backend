@@ -1,9 +1,7 @@
 package com.officetech.officetech.API.services.interfaces.rest;
 
 import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
-import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByCompanyIdQuery;
-import com.officetech.officetech.API.services.domain.model.queries.GetServicesOfficeTechByTechnicianId;
-import com.officetech.officetech.API.services.domain.model.queries.GetUserByIdQuery;
+import com.officetech.officetech.API.services.domain.model.queries.*;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechCommandService;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechQueryService;
 import com.officetech.officetech.API.services.interfaces.rest.resources.CreateNewServiceOfficeTechResource;
@@ -57,6 +55,7 @@ public class ServicesOfficeTechController {
      * @param comment comment new comment to add to the service
      * @param rating rating new rating to add to the service
      * */
+
     @PutMapping("/{serviceId}")
     public ResponseEntity<Response> updateService(@PathVariable Long serviceId, @Param("comment") String comment, @Param("rating") Integer rating) {
         var resource = new EditServiceOfficeTechResource(comment, rating, serviceId);
@@ -143,5 +142,17 @@ public class ServicesOfficeTechController {
         var query = new GetUserByIdQuery(userId);
         var user = serviceOfficeTechQueryService.handle(query);
         return user.map(CreateUserResourceFromEntity::toResourceFromEntity).orElse(null);
+    }
+
+    @GetMapping("/users/technician")
+    public List<UserResource> getUsersTechnician() {
+        var query = new GetUsersTechnicianQuery();
+        return serviceOfficeTechQueryService.handle(query).stream().map(CreateUserResourceFromEntity::toResourceFromEntity).toList(); // this is to convert the list of UserEntity to a list of UserResource and return it as a list
+    }
+
+    @GetMapping("/{idService}")
+    public ServiceOfficeTech getServiceById(@PathVariable Long idService) {
+        var query = new GetServicesByIdQuery(idService);
+        return serviceOfficeTechQueryService.handle(query).orElse(null);
     }
 }

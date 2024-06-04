@@ -28,4 +28,9 @@ public interface ServiceOfficeTechRepository extends JpaRepository<ServiceOffice
 
     @Query("SELECT u FROM UserEntity u WHERE u.id = ?1")
     Optional<UserEntity> findUserById(Long userId);
+
+    @Query("SELECT u from UserEntity u WHERE u.type_user = 'technician'")
+    List<UserEntity> findAllTechnicians();
+
+    Optional<ServiceOfficeTech> findServiceOfficeTechById(Long id);
 }
