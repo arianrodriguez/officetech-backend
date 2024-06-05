@@ -35,10 +35,10 @@ public interface ServiceOfficeTechRepository extends JpaRepository<ServiceOffice
     Optional<ServiceOfficeTech> findServiceOfficeTechById(Long id);
 
 
-
+    /*
     @Query("SELECT s FROM ServiceOfficeTech s JOIN UserEntity t ON s.technicianId = t.id WHERE s.companyId = :companyId")
     List<ServiceOfficeTech> findServicesWithTechnicianInfo(Long companyId);
 
     @Query("SELECT s FROM ServiceOfficeTech s JOIN UserEntity t ON s.technicianId = t.id LEFT JOIN Rating r ON s.id = r.serviceId WHERE s.companyId = :companyId")
-    List<ServiceOfficeTech> findServicesWithTechnicianInfoAndRatings(Long companyId);
+    List<ServiceOfficeTech> findServicesWithTechnicianInfoAndRatings(Long companyId);*/
 }

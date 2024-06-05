@@ -155,7 +155,7 @@ public class ServicesOfficeTechController {
         var query = new GetServicesByIdQuery(idService);
         return serviceOfficeTechQueryService.handle(query).orElse(null);
     }
-
+    /*
 
     // Endpoint para obtener servicios con información del técnico
     @GetMapping("/company/{companyId}/services-with-technician-info")
@@ -171,5 +171,5 @@ public class ServicesOfficeTechController {
         return serviceOfficeTechQueryService.handle(query);
     }
 
-
+*/
 }

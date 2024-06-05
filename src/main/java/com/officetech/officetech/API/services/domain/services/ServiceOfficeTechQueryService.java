@@ -16,7 +16,7 @@ public interface ServiceOfficeTechQueryService {
     List<UserEntity> handle(GetUsersTechnicianQuery query);
 
     Optional<ServiceOfficeTech> handle(GetServicesByIdQuery query);
-
+    /*
     List<ServiceOfficeTech> handle(GetServicesWithTechnicianInfoQuery query);
-    List<ServiceOfficeTech> handle(GetServicesWithTechnicianInfoAndRatingsQuery query);
+    List<ServiceOfficeTech> handle(GetServicesWithTechnicianInfoAndRatingsQuery query);*/
 }
