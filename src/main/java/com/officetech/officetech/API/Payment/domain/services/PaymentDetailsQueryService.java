@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface PaymentDetailsQueryService {
     Optional<PaymentDetail> hande(GetPaymentDetailByUserId query);
+
+    Optional<PaymentDetail> findByUserId(Long userId);
 }

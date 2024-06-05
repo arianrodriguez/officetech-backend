@@ -26,4 +26,10 @@ public class PaymentDetailsQueryServicesImpl implements PaymentDetailsQueryServi
     public Optional<PaymentDetail> hande(GetPaymentDetailByUserId query){
         return paymentDetailRepository.findByUserId(query.user_id());
     }
+
+    @Override
+    public Optional<PaymentDetail> findByUserId(Long userId) {
+        return paymentDetailRepository.findByUserId(userId);
+    }
+
 }

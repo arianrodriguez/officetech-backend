@@ -10,6 +10,8 @@ import com.officetech.officetech.API.Payment.interfaces.rest.transform.PaymentDe
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -34,4 +36,18 @@ public class PaymentDetailsController {
         return paymentDetail.map(source-> new ResponseEntity<>(PaymentDetailsResourceFromEntityAssembler.toResourceFromEntity(source),CREATED)).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
+    @GetMapping("/{user_id}/isExpired")
+    public ResponseEntity<Boolean> isCardExpired(@PathVariable Long user_id) {
+        Optional<PaymentDetail> paymentDetail = paymentDetailsQueryService.findByUserId(user_id);
+        if (paymentDetail.isPresent()) {
+            int currentYear = LocalDate.now().getYear();
+            int currentMonth = LocalDate.now().getMonthValue();
+            int expiratoryYear = Integer.parseInt(paymentDetail.get().getExpiratoryYear());
+            int expiratoryMonth = Month.valueOf(paymentDetail.get().getExpiratoryMonth().toUpperCase()).getValue();
+            boolean isExpired = expiratoryYear < currentYear || (expiratoryYear == currentYear && expiratoryMonth < currentMonth);
+            return ResponseEntity.ok(isExpired);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
