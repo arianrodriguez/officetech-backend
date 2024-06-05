@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value="/api/v1/forum", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Forum")
