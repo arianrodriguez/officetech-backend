@@ -4,6 +4,7 @@ public record GetAnswerResource(
         Long id,
         String description,
         Long idTechnician,
-        Long idPost
+        Long idPost,
+        String createdAt
 ) {
 }

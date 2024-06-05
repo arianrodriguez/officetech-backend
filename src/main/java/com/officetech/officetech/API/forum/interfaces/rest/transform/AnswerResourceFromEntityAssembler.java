@@ -9,7 +9,8 @@ public class AnswerResourceFromEntityAssembler {
             answer.getId(),
             answer.getDescription(),
             answer.getIdTechnician(),
-            answer.getIdPost()
+            answer.getIdPost(),
+            answer.getCreatedAt().toString()
         );
     }
 }
