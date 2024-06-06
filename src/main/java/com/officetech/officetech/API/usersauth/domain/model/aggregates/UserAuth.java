@@ -17,6 +17,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class) // it is used to automatically populate the createdAt and updatedAt fields
@@ -36,6 +38,13 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
 
     @Embedded
     private Role role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_skills",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private Set<Skill> skills = new HashSet<>();
 
     protected UserAuth() {}
     public UserAuth(String firstName, String lastName, String email, String password, String role) {
@@ -67,4 +76,13 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
     public String getEmail() {return email.getEmail();}
     public String getPassword() {return password.getPassword();}
     public Email getEmailObject() {return email;}
+    public Set<Skill> getSkills() { return skills; }
+
+    public void addSkill(Skill skill) {
+        this.skills.add(skill);
+    }
+
+    public void removeSkill(Skill skill) {
+        this.skills.remove(skill);
+    }
 }
