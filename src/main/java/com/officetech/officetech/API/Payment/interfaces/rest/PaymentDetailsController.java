@@ -7,6 +7,7 @@ import com.officetech.officetech.API.Payment.interfaces.rest.resources.CreatePay
 import com.officetech.officetech.API.Payment.interfaces.rest.resources.PaymentDetailsResource;
 import com.officetech.officetech.API.Payment.interfaces.rest.transform.CreatePaymentDetailsCommandFromResourceAssembler;
 import com.officetech.officetech.API.Payment.interfaces.rest.transform.PaymentDetailsResourceFromEntityAssembler;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/api/v1/payment-details")
+@Tag(name = "Payment Details", description = "Endpoints to manage payment details")
 public class PaymentDetailsController {
 
     private final PaymentDetailsCommandService paymentDetailsCommandService;

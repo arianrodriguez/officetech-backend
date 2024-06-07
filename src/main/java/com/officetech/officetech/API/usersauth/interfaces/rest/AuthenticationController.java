@@ -16,7 +16,9 @@ import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Passwor
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthCommandService;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthQueryService;
 import com.officetech.officetech.API.usersauth.interfaces.rest.resources.CreateUserAuthResource;
+import com.officetech.officetech.API.usersauth.interfaces.rest.resources.GetUserAuthResource;
 import com.officetech.officetech.API.usersauth.interfaces.rest.resources.UserAuthResource;
+import com.officetech.officetech.API.usersauth.interfaces.rest.resources.ValidateUserAuthResource;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.CreateUserAuthCommandFromResourceAssembler;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.UserAuthResourceFromEntityAssembler;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.Skill;
@@ -25,10 +27,8 @@ import org.springframework.http.ResponseEntity;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,42 +52,55 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserAuthResource> registerNewUser(@RequestBody CreateUserAuthResource resource) {
+    public ValidateUserAuthResource registerNewUser(@RequestBody CreateUserAuthResource resource) {
         // to verify if the user's email already exists in the database
         GetUserByEmailQuery query = new GetUserByEmailQuery(new Email(resource.email()));
-        boolean userExists = userAuthQueryService.handle(query);
-        if(!userExists) {
+        var userExists = userAuthQueryService.handle(query);
+        if(userExists.isPresent()) {
             System.out.println("User already exists");
-            return ResponseEntity.badRequest().build();
+            // return a body like a : {"status_code: 400", "message": "User already exists}
+            return new ValidateUserAuthResource(400, "User already exists");
+
         }
         else {
             System.out.println("Registering new user");
             Optional<UserAuth> user = userAuthCommandService.handle(CreateUserAuthCommandFromResourceAssembler.toCommandFromResource(resource));
-            return user.map(source -> new ResponseEntity<>(UserAuthResourceFromEntityAssembler.toResourceFromEntity(source), CREATED)).orElseGet(() -> ResponseEntity.badRequest().build());
+            if(user.isEmpty()) {
+                System.out.println("Error while saving user entity");
+                // return a body like a : {"status_code: 500", "message": "Error while saving user entity}
+                return new ValidateUserAuthResource(500, "Error while saving user entity");
+            }
+            return new ValidateUserAuthResource(201, "User created successfully");
         }
-
-
     }
 
     @GetMapping("/login")
-    public ResponseEntity<UserAuthResource> existsUser(String email, String password) {
+    public GetUserAuthResource existsUser(String email, String password) {
         System.out.println("Logging in user");
         GetUserByEmailQuery query = new GetUserByEmailQuery(new Email(email));
-        boolean user = userAuthQueryService.handle(query);
-        if(user) {
+        var user = userAuthQueryService.handle(query);
+        if(user.isEmpty()) {
             System.out.println("User not found");
-            return ResponseEntity.badRequest().build();
+            return new GetUserAuthResource(404, "User not found", null);
         }
 
         AuthUserQuery authUserQuery = new AuthUserQuery(new Email(email), new Password(password));
         boolean resultMatch = userAuthQueryService.handle(authUserQuery);
         if(!resultMatch) {
             System.out.println("Password incorrect");
-            return ResponseEntity.badRequest().build();
+            return new GetUserAuthResource(400, "Password incorrect", null);
         }
 
         System.out.println("Logged!");
-        return ResponseEntity.ok().build();
+
+        return new GetUserAuthResource(202, "Logged", UserAuthResourceFromEntityAssembler.toResourceFromEntity(new UserAuth(
+                user.get().getFirstName(),
+                user.get().getLastName(),
+                user.get().getEmail(),
+                user.get().getPassword(),
+                user.get().getRole()
+        )));
+
     }
     @GetMapping("/{userId}/skills")
     public ResponseEntity<Set<Skill>> getSkillsByUserId(@PathVariable Long userId) {

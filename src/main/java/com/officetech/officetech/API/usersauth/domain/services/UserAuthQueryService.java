@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 public interface UserAuthQueryService {
-    boolean handle(GetUserByEmailQuery query);
+    Optional<UserAuth> handle(GetUserByEmailQuery query);
     boolean handle(AuthUserQuery query);
 }
