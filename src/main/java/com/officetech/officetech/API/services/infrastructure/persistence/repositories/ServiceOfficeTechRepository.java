@@ -3,6 +3,7 @@ package com.officetech.officetech.API.services.infrastructure.persistence.reposi
 import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
 import com.officetech.officetech.API.services.domain.model.entities.UserEntity;
 import com.officetech.officetech.API.services.interfaces.rest.resources.UserResource;
+import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -26,11 +27,11 @@ public interface ServiceOfficeTechRepository extends JpaRepository<ServiceOffice
     @Query("SELECT s FROM ServiceOfficeTech s WHERE s.technicianId = ?1 AND s.status IN ('Cancelled', 'Completed')")
     List<ServiceOfficeTech> findAllByTechnicianIdWhereStatusIsInCompleted(Long technicianId);
 
-    @Query("SELECT u FROM UserEntity u WHERE u.id = ?1")
-    Optional<UserEntity> findUserById(Long userId);
+    @Query("SELECT u FROM UserAuth u WHERE u.id = ?1")
+    Optional<UserAuth> findUserById(Long userId);
 
-    @Query("SELECT u from UserEntity u WHERE u.type_user = 'technician'")
-    List<UserEntity> findAllTechnicians();
+    @Query("SELECT u from UserAuth u WHERE u.role.role = 'technician'")
+    List<UserAuth> findAllTechnicians();
 
     Optional<ServiceOfficeTech> findServiceOfficeTechById(Long id);
 

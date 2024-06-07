@@ -11,6 +11,7 @@ import com.officetech.officetech.API.usersauth.application.internal.queryservice
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import com.officetech.officetech.API.usersauth.domain.model.queries.AuthUserQuery;
 import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEmailQuery;
+import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByIdQuery;
 import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Email;
 import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Password;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthCommandService;
@@ -103,6 +104,13 @@ public class AuthenticationController {
         return new GetUserAuthResource(202, "Logged", UserAuthResourceFromEntityAssembler.toResourceFromEntity(user.get()));
 
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserAuth> getUserById(@PathVariable Long userId) {
+        Optional<UserAuth> user = userAuthQueryService.handle(new GetUserByIdQuery(userId));
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{userId}/skills")
     public ResponseEntity<Set<Skill>> getSkillsByUserId(@PathVariable Long userId) {
         Optional<Set<Skill>> skills = skillQueryService.getSkillsByUserId(userId);

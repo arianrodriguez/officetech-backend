@@ -7,6 +7,7 @@ import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechQ
 import com.officetech.officetech.API.services.infrastructure.persistence.repositories.ServiceOfficeTechRepository;
 import com.officetech.officetech.API.services.interfaces.rest.resources.UserResource;
 import com.officetech.officetech.API.services.internal.commandservices.ServiceOfficeTechCommandServiceImpl;
+import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class ServiceOfficeTechQueryServiceImpl implements ServiceOfficeTechQuery
     }
 
     @Override
-    public Optional<UserEntity> handle(GetUserByIdQuery query) {
+    public Optional<UserAuth> handle(GetUserByIdQuery query) {
         try {
             return serviceOfficeTechRepository.findUserById(query.userId());
         }catch(Exception e) {
@@ -56,7 +57,7 @@ public class ServiceOfficeTechQueryServiceImpl implements ServiceOfficeTechQuery
     }
 
     @Override
-    public List<UserEntity> handle(GetUsersTechnicianQuery query) {
+    public List<UserAuth> handle(GetUsersTechnicianQuery query) {
         try {
             return serviceOfficeTechRepository.findAllTechnicians();
         }catch(Exception e) {

@@ -3,6 +3,7 @@ package com.officetech.officetech.API.usersauth.application.internal.queryservic
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import com.officetech.officetech.API.usersauth.domain.model.queries.AuthUserQuery;
 import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEmailQuery;
+import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByIdQuery;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthQueryService;
 import com.officetech.officetech.API.usersauth.infrastructure.persistance.jpa.UserAuthRepository;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,16 @@ public class UserAuthQueryServiceImpl implements UserAuthQueryService {
         }catch(Exception e) {
             System.out.println("UserAuthCommandServiceImpl: Error while saving user entity" + e);
             return false;
+        }
+    }
+
+    @Override
+    public Optional<UserAuth> handle(GetUserByIdQuery email) {
+        try {
+            return userAuthRepository.findById(email.id());
+        }catch(Exception e) {
+            System.out.println("UserAuthCommandServiceImpl: Error while saving user entity" + e);
+            return Optional.empty();
         }
     }
 }
