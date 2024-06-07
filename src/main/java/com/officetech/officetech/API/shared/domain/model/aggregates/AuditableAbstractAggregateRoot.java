@@ -2,6 +2,7 @@ package com.officetech.officetech.API.shared.domain.model.aggregates;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.AbstractAggregateRoot;
@@ -15,6 +16,7 @@ public class AuditableAbstractAggregateRoot<T extends AbstractAggregateRoot<T>> 
     // this is used to publish domain events
     @Id
     @Getter
+    @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

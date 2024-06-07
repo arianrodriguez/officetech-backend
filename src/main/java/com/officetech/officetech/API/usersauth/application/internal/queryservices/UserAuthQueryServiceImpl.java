@@ -21,15 +21,13 @@ public class UserAuthQueryServiceImpl implements UserAuthQueryService {
 
     @Override
     public Optional<UserAuth> handle(GetUserByEmailQuery query) {
-        Optional<UserAuth> getUserAuth = Optional.empty();
         try {
-            var userAuth = new UserAuth(query);
-            getUserAuth = userAuthRepository.findUserAuthByEmail(userAuth.getEmailObject());
+            return userAuthRepository.findUserAuthByEmail(query.email());
         }catch(Exception e) {
             System.out.println("UserAuthCommandServiceImpl: Error while saving user entity" + e);
+            return Optional.empty();
         }
 
-        return getUserAuth;
     }
 
     @Override

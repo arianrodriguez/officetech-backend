@@ -19,10 +19,6 @@ public class UserAuthCommandServiceImpl implements UserAuthCommandService {
     @Override
     public Optional<UserAuth> handle(CreateUserAuthCommand command) {
         System.out.println("UserAuthCommandServiceImpl: Handling create user command");
-        /*
-        if (userAuthRepository.existsById(command.id())) {
-            throw new IllegalArgumentException("User with same user ID already exists");
-        }*/
         var userAuth = new UserAuth(command);
         System.out.println("UserAuthCommandServiceImpl: Saving user entity");
         var createdUserAuth = userAuthRepository.save(userAuth);

@@ -12,6 +12,6 @@ public class UserAuthResourceFromEntityAssembler {
 
     public static UserAuthResource toResourceFromEntity(UserAuth entity) {
         System.out.println("UserAuthResourceFromEntityAssembler: converting entity to resource");
-        return new UserAuthResource(entity.getFirstName(), entity.getLastName(), entity.getEmail(), entity.getPassword(), entity.getRole());
+        return new UserAuthResource(entity.getId(), entity.getFirstName(), entity.getLastName(), entity.getEmail(), entity.getPassword(), entity.getRole());
     }
 }

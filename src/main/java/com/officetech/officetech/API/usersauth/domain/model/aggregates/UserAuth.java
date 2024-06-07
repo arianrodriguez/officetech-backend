@@ -24,6 +24,9 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class) // it is used to automatically populate the createdAt and updatedAt fields
 public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
 
+    @Id
+    @Getter
+    private Long id;
     @Embedded
     private FirstName firstName;
 
@@ -48,6 +51,7 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
 
     protected UserAuth() {}
     public UserAuth(String firstName, String lastName, String email, String password, String role) {
+
         this.firstName = new FirstName(firstName);
         this.lastName = new LastName(lastName);
         this.email = new Email(email);

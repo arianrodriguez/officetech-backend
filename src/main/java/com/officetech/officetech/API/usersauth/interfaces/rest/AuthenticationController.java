@@ -15,10 +15,7 @@ import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Email;
 import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Password;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthCommandService;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthQueryService;
-import com.officetech.officetech.API.usersauth.interfaces.rest.resources.CreateUserAuthResource;
-import com.officetech.officetech.API.usersauth.interfaces.rest.resources.GetUserAuthResource;
-import com.officetech.officetech.API.usersauth.interfaces.rest.resources.UserAuthResource;
-import com.officetech.officetech.API.usersauth.interfaces.rest.resources.ValidateUserAuthResource;
+import com.officetech.officetech.API.usersauth.interfaces.rest.resources.*;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.CreateUserAuthCommandFromResourceAssembler;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.UserAuthResourceFromEntityAssembler;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.Skill;
@@ -29,11 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/api/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Authentication", description = "Authentication Management Endpoints")
@@ -64,13 +63,21 @@ public class AuthenticationController {
         }
         else {
             System.out.println("Registering new user");
-            Optional<UserAuth> user = userAuthCommandService.handle(CreateUserAuthCommandFromResourceAssembler.toCommandFromResource(resource));
+            var command = CreateUserAuthCommandFromResourceAssembler.toCommandFromResource(resource);
+            var validation = new ValidateUserAuthCommand(command);
+            var result = validation.validate();
+            if(!Objects.equals(result, "")) {
+                System.out.println("Error while validating user entity");
+                return new ValidateUserAuthResource(400, result);
+            }
+
+            Optional<UserAuth> user = userAuthCommandService.handle(command);
             if(user.isEmpty()) {
                 System.out.println("Error while saving user entity");
                 // return a body like a : {"status_code: 500", "message": "Error while saving user entity}
                 return new ValidateUserAuthResource(500, "Error while saving user entity");
             }
-            return new ValidateUserAuthResource(201, "User created successfully");
+            return new ValidateUserAuthResource(202, "User created successfully");
         }
     }
 
@@ -93,13 +100,7 @@ public class AuthenticationController {
 
         System.out.println("Logged!");
 
-        return new GetUserAuthResource(202, "Logged", UserAuthResourceFromEntityAssembler.toResourceFromEntity(new UserAuth(
-                user.get().getFirstName(),
-                user.get().getLastName(),
-                user.get().getEmail(),
-                user.get().getPassword(),
-                user.get().getRole()
-        )));
+        return new GetUserAuthResource(202, "Logged", UserAuthResourceFromEntityAssembler.toResourceFromEntity(user.get()));
 
     }
     @GetMapping("/{userId}/skills")
