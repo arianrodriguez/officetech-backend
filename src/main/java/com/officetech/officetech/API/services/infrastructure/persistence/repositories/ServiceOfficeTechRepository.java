@@ -1,8 +1,6 @@
 package com.officetech.officetech.API.services.infrastructure.persistence.repositories;
 
 import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
-import com.officetech.officetech.API.services.domain.model.entities.UserEntity;
-import com.officetech.officetech.API.services.interfaces.rest.resources.UserResource;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

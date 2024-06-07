@@ -3,6 +3,7 @@ package com.officetech.officetech.API.forum.domain.model.aggregates;
 
 import com.officetech.officetech.API.forum.domain.model.commands.CreateNewPostCommand;
 import com.officetech.officetech.API.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 
@@ -11,6 +12,7 @@ import lombok.Getter;
 public class Post extends AuditableAbstractAggregateRoot<Post> {
     private Long idCompany;
     private String title;
+    @Column(length = 5000)
     private String description;
 
     public Post(){}

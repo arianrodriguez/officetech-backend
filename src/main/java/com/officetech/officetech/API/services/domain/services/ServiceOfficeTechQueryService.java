@@ -1,9 +1,7 @@
 package com.officetech.officetech.API.services.domain.services;
 
 import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
-import com.officetech.officetech.API.services.domain.model.entities.UserEntity;
 import com.officetech.officetech.API.services.domain.model.queries.*;
-import com.officetech.officetech.API.services.interfaces.rest.resources.UserResource;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 
 import java.util.List;

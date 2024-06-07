@@ -6,6 +6,7 @@ import com.officetech.officetech.API.forum.domain.services.PostCommandService;
 import com.officetech.officetech.API.forum.domain.services.PostQueryService;
 import com.officetech.officetech.API.forum.interfaces.rest.resources.CreateNewPostResource;
 import com.officetech.officetech.API.forum.interfaces.rest.resources.GetPostResource;
+import com.officetech.officetech.API.forum.interfaces.rest.resources.GetResponsePostResource;
 import com.officetech.officetech.API.forum.interfaces.rest.transform.CreateNewPostCommandFromResourceAssembler;
 import com.officetech.officetech.API.forum.interfaces.rest.transform.PostResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,11 +45,10 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<GetPostResource> getPostById(@PathVariable Long postId) {
+    public GetResponsePostResource getPostById(@PathVariable Long postId) {
         var query = new GetPostByIdQuery(postId);
         var post = postQueryService.handle(query);
-        return post.map(PostResourceFromEntityAssembler::toResourceFromEntity)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        if(post.isEmpty()) return new GetResponsePostResource(404, "Post not found", null);
+        return new GetResponsePostResource(202, "Post found", PostResourceFromEntityAssembler.toResourceFromEntity(post.get()));
     }
 }

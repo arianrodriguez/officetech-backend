@@ -1,12 +1,9 @@
 package com.officetech.officetech.API.services.internal.queryservices;
 
 import com.officetech.officetech.API.services.domain.model.aggregates.ServiceOfficeTech;
-import com.officetech.officetech.API.services.domain.model.entities.UserEntity;
 import com.officetech.officetech.API.services.domain.model.queries.*;
 import com.officetech.officetech.API.services.domain.services.ServiceOfficeTechQueryService;
 import com.officetech.officetech.API.services.infrastructure.persistence.repositories.ServiceOfficeTechRepository;
-import com.officetech.officetech.API.services.interfaces.rest.resources.UserResource;
-import com.officetech.officetech.API.services.internal.commandservices.ServiceOfficeTechCommandServiceImpl;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import org.springframework.stereotype.Service;
 

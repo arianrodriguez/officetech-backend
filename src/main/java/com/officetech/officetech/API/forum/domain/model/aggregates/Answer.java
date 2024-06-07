@@ -2,6 +2,7 @@ package com.officetech.officetech.API.forum.domain.model.aggregates;
 
 import com.officetech.officetech.API.forum.domain.model.commands.CreateNewAnswerCommand;
 import com.officetech.officetech.API.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import org.apache.logging.log4j.util.Strings;
@@ -10,6 +11,7 @@ import org.springframework.boot.ansi.AnsiElement;
 @Getter
 @Entity
 public class Answer extends AuditableAbstractAggregateRoot<Answer> {
+    @Column(length = 5000)
     private String description;
     private Long idTechnician;
     private Long idPost;
