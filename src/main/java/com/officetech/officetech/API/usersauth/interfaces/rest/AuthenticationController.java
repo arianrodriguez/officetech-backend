@@ -6,6 +6,8 @@ package com.officetech.officetech.API.usersauth.interfaces.rest;
 * It handles HTTP requests and delegates to the appropriate services.</p>
 * */
 
+import com.officetech.officetech.API.usersauth.application.internal.commandservices.SkillCommandServiceImpl;
+import com.officetech.officetech.API.usersauth.application.internal.queryservices.SkillQueryServiceImpl;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import com.officetech.officetech.API.usersauth.domain.model.queries.AuthUserQuery;
 import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEmailQuery;
@@ -17,13 +19,18 @@ import com.officetech.officetech.API.usersauth.interfaces.rest.resources.CreateU
 import com.officetech.officetech.API.usersauth.interfaces.rest.resources.UserAuthResource;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.CreateUserAuthCommandFromResourceAssembler;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.UserAuthResourceFromEntityAssembler;
+import com.officetech.officetech.API.usersauth.domain.model.aggregates.Skill;
+import org.springframework.http.ResponseEntity;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -33,10 +40,15 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class AuthenticationController {
     private final UserAuthCommandService userAuthCommandService;
     private final UserAuthQueryService userAuthQueryService;
+    private final SkillQueryServiceImpl skillQueryService;
+    @Autowired
+    private SkillCommandServiceImpl skillCommandService;
 
-    public AuthenticationController(UserAuthCommandService userAuthCommandService, UserAuthQueryService userAuthQueryService) {
+
+    public AuthenticationController(UserAuthCommandService userAuthCommandService, UserAuthQueryService userAuthQueryService, SkillQueryServiceImpl skillQueryService) {
         this.userAuthCommandService = userAuthCommandService;
         this.userAuthQueryService = userAuthQueryService;
+        this.skillQueryService = skillQueryService;
     }
 
     @PostMapping("/register")
@@ -76,6 +88,22 @@ public class AuthenticationController {
 
         System.out.println("Logged!");
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/{userId}/skills")
+    public ResponseEntity<Set<Skill>> getSkillsByUserId(@PathVariable Long userId) {
+        Optional<Set<Skill>> skills = skillQueryService.getSkillsByUserId(userId);
+        return skills.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    @PostMapping("/{userId}/skills/{skillId}")
+    public ResponseEntity<UserAuth> addSkillToUser(@PathVariable Long userId, @PathVariable Long skillId) {
+        Optional<UserAuth> user = skillCommandService.addSkillToUser(userId, skillId);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping("/{userId}/skills/{skillId}")
+    public ResponseEntity<UserAuth> removeSkillFromUser(@PathVariable Long userId, @PathVariable Long skillId) {
+        Optional<UserAuth> user = skillCommandService.removeSkillFromUser(userId, skillId);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
 }

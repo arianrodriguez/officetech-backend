@@ -4,13 +4,18 @@ import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Email;
 import org.apache.catalina.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserAuthRepository extends JpaRepository<UserAuth, Long> {
     boolean existsById(Long id);
-    //UserAuth findByUserId(String userId);
     Optional<UserAuth> findUserAuthByEmail(Email email);
     List<UserAuth> findAll();
+
+    @Query("SELECT u FROM UserAuth u LEFT JOIN FETCH u.skills WHERE u.id = :userId")
+    Optional<UserAuth> findByIdWithSkills(@Param("userId") Long userId);
+
 }
