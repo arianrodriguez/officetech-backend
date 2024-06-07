@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/payment-details")
 @Tag(name = "Payment Details", description = "Endpoints to manage payment details")

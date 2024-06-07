@@ -58,7 +58,7 @@ public class AuthenticationController {
         if(userExists.isPresent()) {
             System.out.println("User already exists");
             // return a body like a : {"status_code: 400", "message": "User already exists}
-            return new ValidateUserAuthResource(400, "User already exists");
+            return new ValidateUserAuthResource(400, "User already exists", null);
 
         }
         else {
@@ -68,16 +68,16 @@ public class AuthenticationController {
             var result = validation.validate();
             if(!Objects.equals(result, "")) {
                 System.out.println("Error while validating user entity");
-                return new ValidateUserAuthResource(400, result);
+                return new ValidateUserAuthResource(400, result, null);
             }
 
             Optional<UserAuth> user = userAuthCommandService.handle(command);
             if(user.isEmpty()) {
                 System.out.println("Error while saving user entity");
                 // return a body like a : {"status_code: 500", "message": "Error while saving user entity}
-                return new ValidateUserAuthResource(500, "Error while saving user entity");
+                return new ValidateUserAuthResource(500, "Error while saving user entity", null);
             }
-            return new ValidateUserAuthResource(202, "User created successfully");
+            return new ValidateUserAuthResource(202, "User created successfully", new GetCreateUserAuthResource(user.get().getId(), user.get().getRole()));
         }
     }
 
