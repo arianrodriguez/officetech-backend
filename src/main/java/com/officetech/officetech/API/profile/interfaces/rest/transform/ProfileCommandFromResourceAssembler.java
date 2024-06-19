@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class ProfileCommandFromResourceAssembler {
     public static UpdateProfileCommand toCommandFromResource(ProfileResource resource) {
         System.out.println("ProfileCommandFromResourceAssembler: converting resource to command");
-        return new UpdateProfileCommand(resource.id(), resource.firstName(), resource.lastName(), resource.email(), resource.phone(), resource.password());
+        return new UpdateProfileCommand(resource.id(), resource.firstName(), resource.lastName(), resource.phone(), resource.password());
     }
 }
 

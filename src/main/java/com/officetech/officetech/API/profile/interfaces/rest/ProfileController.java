@@ -1,10 +1,12 @@
 package com.officetech.officetech.API.profile.interfaces.rest;
 
-import com.officetech.officetech.API.profile.domain.model.aggregates.Profile;
 import com.officetech.officetech.API.profile.domain.model.commands.UpdateProfileCommand;
 import com.officetech.officetech.API.profile.interfaces.rest.resources.ProfileResource;
 import com.officetech.officetech.API.profile.interfaces.rest.transform.ProfileCommandFromResourceAssembler;
 import com.officetech.officetech.API.profile.domain.services.ProfileCommandService;
+import com.officetech.officetech.API.profile.interfaces.rest.transform.ProfileResourceFromEntityAssembler;
+import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,21 +17,31 @@ import static org.springframework.http.HttpStatus.CREATED;
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/profiles")
+@Tag(name = "Profile", description = "Profile API")
 public class ProfileController {
 
     private final ProfileCommandService profileCommandService;
-    private final ProfileCommandFromResourceAssembler assembler;
 
-    public ProfileController(ProfileCommandService profileCommandService, ProfileCommandFromResourceAssembler assembler) {
+    public ProfileController(ProfileCommandService profileCommandService) {
         this.profileCommandService = profileCommandService;
-        this.assembler = assembler;
     }
 
-    @PostMapping
-    public ResponseEntity<Profile> createProfile(@RequestBody ProfileResource resource) {
-        UpdateProfileCommand command = assembler.toCommandFromResource(resource);
-        Optional<Profile> newProfile = profileCommandService.handle(command);
-        return newProfile.map(source-> new ResponseEntity<>(source, CREATED)).orElseGet(() -> ResponseEntity.badRequest().build());
+    // edit by id
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editProfile(@RequestBody ProfileResource resource) {
+        try {
+            UpdateProfileCommand command = ProfileCommandFromResourceAssembler.toCommandFromResource(resource);
+            Optional<UserAuth> newProfile = profileCommandService.handle(command);
+            if(newProfile.isEmpty()) {
+                return ResponseEntity.badRequest().body("Profile not found");
+            }
+
+            return ResponseEntity.status(CREATED).body(ProfileResourceFromEntityAssembler.toResourceFromEntity(newProfile.get()));
+        }catch(IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 

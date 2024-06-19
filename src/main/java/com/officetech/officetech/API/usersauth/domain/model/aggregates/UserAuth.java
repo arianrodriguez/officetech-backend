@@ -13,11 +13,14 @@ import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEma
 import com.officetech.officetech.API.usersauth.domain.model.valueobjects.*;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -42,6 +45,9 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
     @Embedded
     private Role role;
 
+    @Getter
+    private String phone;
+
     @ManyToMany
     @JoinTable(
             name = "user_skills",
@@ -57,6 +63,7 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
         this.email = new Email(email);
         this.password = new Password(password);
         this.role = new Role(role);
+        this.phone = Strings.EMPTY;
         this.setCreatedAt();
         this.setUpdatedAt();
     }
@@ -67,6 +74,7 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
         this.email = new Email(command.email());
         this.password = new Password(command.password());
         this.role = new Role(command.role());
+        this.phone = Strings.EMPTY;
         this.setCreatedAt();
         this.setUpdatedAt();
     }
@@ -81,6 +89,27 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
     public String getPassword() {return password.getPassword();}
     public Email getEmailObject() {return email;}
     public Set<Skill> getSkills() { return skills; }
+
+    public void setFirstName(String firstName) {
+        if(Objects.equals(firstName, Strings.EMPTY)) return;
+        this.firstName = new FirstName(firstName);
+    }
+
+    public void setLastName(String lastName) {
+        if(Objects.equals(lastName, Strings.EMPTY)) return;
+
+        this.lastName = new LastName(lastName);
+    }
+    public void setPassword(String password) {
+        if(Objects.equals(password, Strings.EMPTY)) return;
+        this.password = new Password(password);
+    }
+
+    public void setPhone(String phone) {
+        if(Objects.equals(phone, Strings.EMPTY)) return;
+        this.phone = phone;
+
+    }
 
     public void addSkill(Skill skill) {
         this.skills.add(skill);
