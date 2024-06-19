@@ -17,6 +17,7 @@ import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Passwor
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthCommandService;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthQueryService;
 import com.officetech.officetech.API.usersauth.interfaces.rest.resources.*;
+import com.officetech.officetech.API.usersauth.interfaces.rest.transform.CreateSkillCommandFromResourceAssembler;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.CreateUserAuthCommandFromResourceAssembler;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.UserAuthResourceFromEntityAssembler;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.Skill;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -111,15 +113,31 @@ public class AuthenticationController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{userId}/skills")
-    public ResponseEntity<Set<Skill>> getSkillsByUserId(@PathVariable Long userId) {
-        Optional<Set<Skill>> skills = skillQueryService.getSkillsByUserId(userId);
-        return skills.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/skills/{userId}")
+    public ResponseEntity<?> getSkillsByUserId(@PathVariable Long userId) {
+        try {
+            List<Skill> skills = skillQueryService.getSkillsByUserId(userId);
+            return ResponseEntity.ok(skills);
+        }catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-    @PostMapping("/{userId}/skills/{skillId}")
-    public ResponseEntity<UserAuth> addSkillToUser(@PathVariable Long userId, @PathVariable Long skillId) {
-        Optional<UserAuth> user = skillCommandService.addSkillToUser(userId, skillId);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+    @PostMapping("/skills")
+    public ResponseEntity<?> addSkillToUser(@RequestBody CreateSkillResource resource) {
+        System.out.println(resource);
+        try {
+            var command = CreateSkillCommandFromResourceAssembler.toCommandFromResource(resource);
+            Optional<Skill> skill = skillCommandService.handle(command);
+            if(skill.isEmpty()) {
+                return ResponseEntity.badRequest().body("Error while saving skill entity");
+            }
+
+            return ResponseEntity.status(CREATED).body(skill.get());
+        }catch(IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{userId}/skills/{skillId}")

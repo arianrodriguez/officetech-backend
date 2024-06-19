@@ -17,7 +17,4 @@ public interface UserAuthRepository extends JpaRepository<UserAuth, Long> {
     Optional<UserAuth> findUserAuthByEmail(Email email);
     List<UserAuth> findAll();
 
-    @Query("SELECT u FROM UserAuth u LEFT JOIN FETCH u.skills WHERE u.id = :userId")
-    Optional<UserAuth> findByIdWithSkills(@Param("userId") Long userId);
-
 }

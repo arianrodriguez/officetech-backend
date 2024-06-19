@@ -1,5 +1,6 @@
 package com.officetech.officetech.API.usersauth.application.internal.commandservices;
 
+import com.officetech.officetech.API.usersauth.domain.model.commands.CreateSkillCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.Skill;
@@ -23,25 +24,19 @@ public class SkillCommandServiceImpl implements SkillCommandService {
     }
 
     @Override
-    public Optional<UserAuth> addSkillToUser(Long userId, Long skillId) {
-        Optional<UserAuth> userOpt = userAuthRepository.findById(userId);
-        Optional<Skill> skillOpt = skillRepository.findById(skillId);
+    public Optional<Skill> handle(CreateSkillCommand command) {
+        Optional<UserAuth> userOpt = userAuthRepository.findById(command.userId());
+        if (userOpt.isEmpty()) throw new IllegalArgumentException("User not found");
 
-        if (userOpt.isPresent() && skillOpt.isPresent()) {
-            UserAuth user = userOpt.get();
-            Skill skill = skillOpt.get();
-
-            if (user.getRole().equals("1")) {//REVISAR EL GET ROLE
-                user.addSkill(skill);
-                userAuthRepository.save(user);
-                return Optional.of(user);
-            }
-        }
-        return Optional.empty();
+        Skill skill = new Skill(command);
+        skillRepository.save(skill);
+        return Optional.of(skill);
     }
+
 
     @Override
     public Optional<UserAuth> removeSkillFromUser(Long userId, Long skillId) {
+        /*
         Optional<UserAuth> userOpt = userAuthRepository.findById(userId);
         Optional<Skill> skillOpt = skillRepository.findById(skillId);
 
@@ -58,7 +53,7 @@ public class SkillCommandServiceImpl implements SkillCommandService {
                 userAuthRepository.save(user);
                 return Optional.of(user);
             }
-        }
+        }*/
         return Optional.empty();
     }
 }
