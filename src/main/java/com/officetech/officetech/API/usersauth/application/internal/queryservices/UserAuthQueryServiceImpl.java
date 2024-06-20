@@ -1,7 +1,9 @@
 package com.officetech.officetech.API.usersauth.application.internal.queryservices;
 
+import com.officetech.officetech.API.usersauth.domain.model.aggregates.Skill;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import com.officetech.officetech.API.usersauth.domain.model.queries.AuthUserQuery;
+import com.officetech.officetech.API.usersauth.domain.model.queries.GetAllSkillsQuery;
 import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEmailQuery;
 import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByIdQuery;
 import com.officetech.officetech.API.usersauth.domain.services.UserAuthQueryService;
@@ -52,4 +54,6 @@ public class UserAuthQueryServiceImpl implements UserAuthQueryService {
             return Optional.empty();
         }
     }
+
+
 }

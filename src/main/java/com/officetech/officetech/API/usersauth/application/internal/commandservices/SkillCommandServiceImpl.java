@@ -35,25 +35,12 @@ public class SkillCommandServiceImpl implements SkillCommandService {
 
 
     @Override
-    public Optional<UserAuth> removeSkillFromUser(Long userId, Long skillId) {
-        /*
-        Optional<UserAuth> userOpt = userAuthRepository.findById(userId);
+    public Boolean handle(Long skillId) {
         Optional<Skill> skillOpt = skillRepository.findById(skillId);
+        if (skillOpt.isEmpty()) throw new IllegalArgumentException("Skill not found");
 
-        if (userOpt.isPresent() && skillOpt.isPresent()) {
-            UserAuth user = userOpt.get();
-            Skill skill = skillOpt.get();
-
-            if (user.getRole().equals("1")) {
-                user.removeSkill(skill);
-                if (user.getSkills().isEmpty()) {
-                    Optional<Skill> defaultSkillOpt = skillRepository.findById(1L); // ID de una habilidad por defecto
-                    defaultSkillOpt.ifPresent(user::addSkill);
-                }
-                userAuthRepository.save(user);
-                return Optional.of(user);
-            }
-        }*/
-        return Optional.empty();
+        Skill skill = skillOpt.get();
+        skillRepository.delete(skill);
+        return true;
     }
 }

@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface SkillCommandService {
     Optional<Skill> handle(CreateSkillCommand command);
-    Optional<UserAuth> removeSkillFromUser(Long userId, Long skillId);
+    Boolean handle(Long skillId);
 }

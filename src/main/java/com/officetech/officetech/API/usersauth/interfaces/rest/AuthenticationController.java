@@ -10,6 +10,7 @@ import com.officetech.officetech.API.usersauth.application.internal.commandservi
 import com.officetech.officetech.API.usersauth.application.internal.queryservices.SkillQueryServiceImpl;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.UserAuth;
 import com.officetech.officetech.API.usersauth.domain.model.queries.AuthUserQuery;
+import com.officetech.officetech.API.usersauth.domain.model.queries.GetAllSkillsQuery;
 import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByEmailQuery;
 import com.officetech.officetech.API.usersauth.domain.model.queries.GetUserByIdQuery;
 import com.officetech.officetech.API.usersauth.domain.model.valueobjects.Email;
@@ -21,6 +22,7 @@ import com.officetech.officetech.API.usersauth.interfaces.rest.transform.CreateS
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.CreateUserAuthCommandFromResourceAssembler;
 import com.officetech.officetech.API.usersauth.interfaces.rest.transform.UserAuthResourceFromEntityAssembler;
 import com.officetech.officetech.API.usersauth.domain.model.aggregates.Skill;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -140,10 +142,22 @@ public class AuthenticationController {
         }
     }
 
-    @DeleteMapping("/{userId}/skills/{skillId}")
-    public ResponseEntity<UserAuth> removeSkillFromUser(@PathVariable Long userId, @PathVariable Long skillId) {
-        Optional<UserAuth> user = skillCommandService.removeSkillFromUser(userId, skillId);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+    @DeleteMapping("/skills/{skillId}")
+    public ResponseEntity<UserAuth> removeSkillFromUser(@PathVariable Long skillId) {
+        if(skillCommandService.handle(skillId)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/skills")
+    public ResponseEntity<?> getAllSkills() {
+        try {
+            List<Skill> skills = skillQueryService.handle(new GetAllSkillsQuery());
+            return ResponseEntity.ok(skills);
+        }catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
