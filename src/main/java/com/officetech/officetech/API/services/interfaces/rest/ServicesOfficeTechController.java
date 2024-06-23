@@ -18,6 +18,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+/**
+ * This controller is the entry point for the services context.
+ * It exposes the endpoints to interact with the services.
+ * It is implemented as part of an anti-corruption layer (ACL) to be consumed by other contexts.
+ * @author Arian Rodriguez and Marcelo Ramirez
+ * @version 1.0
+ * */
 @CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/api/v1/services", produces = MediaType.APPLICATION_JSON_VALUE)

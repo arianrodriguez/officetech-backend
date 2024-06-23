@@ -1,9 +1,11 @@
 package com.officetech.officetech.API.usersauth.interfaces.rest;
 
-/*
+/**
 * REST controller for managing authentication.
 * <p>This controller provides endpoints for authenticating users.
 * It handles HTTP requests and delegates to the appropriate services.</p>
+* @author Fabia Herrera
+ * @version 1.0
 * */
 
 import com.officetech.officetech.API.usersauth.application.internal.commandservices.SkillCommandServiceImpl;
@@ -54,7 +56,19 @@ public class AuthenticationController {
         this.userAuthQueryService = userAuthQueryService;
         this.skillQueryService = skillQueryService;
     }
-
+    /**
+     * POST /register : Register a new user.
+     * <p>
+     *     This endpoint is used to register a new user.
+     *     It receives a JSON object with the user's email and password.
+     *     It returns a JSON object with the status code, message and the user's id and role.
+     *     If the user's email already exists in the database, it returns a JSON object with the status code and message.
+     *     If the user's email does not exist in the database, it returns a JSON object with the status code, message and the user's id and role.
+     * </p>
+     * @param resource the JSON object with the user's email and password
+     * @author Fabia Herrera
+     * edit: Arian Rodriguez
+     * */
     @PostMapping("/register")
     public ValidateUserAuthResource registerNewUser(@RequestBody CreateUserAuthResource resource) {
         // to verify if the user's email already exists in the database
@@ -86,6 +100,19 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * GET /login : Log in a user.
+     * <p>
+     *     This endpoint is used to log in a user.
+     *     It receives a JSON object with the user's email and password.
+     *     It returns a JSON object with the status code, message and the user's id and role.
+     *     If the user's email does not exist in the database, it returns a JSON object with the status code and message.
+     *     If the user's password is incorrect, it returns a JSON object with the status code and message.
+     * </p>
+     * @param email the user's email
+     * @param password the user's password
+     * @return a JSON object with the status code, message and the user's id and role
+     * */
     @GetMapping("/login")
     public GetUserAuthResource existsUser(String email, String password) {
         System.out.println("Logging in user");
@@ -109,11 +136,23 @@ public class AuthenticationController {
 
     }
 
+    /**
+     * This method is used to get a user by its id.
+     * @param userId the user's id
+     *               @return a JSON object with the user's id, email and role
+     *
+     * */
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserAuth> getUserById(@PathVariable Long userId) {
         Optional<UserAuth> user = userAuthQueryService.handle(new GetUserByIdQuery(userId));
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    /**
+     * This method is to get all the users.
+     * @return a JSON object with the user's id, email and role
+     * */
 
     @GetMapping("/skills/{userId}")
     public ResponseEntity<?> getSkillsByUserId(@PathVariable Long userId) {

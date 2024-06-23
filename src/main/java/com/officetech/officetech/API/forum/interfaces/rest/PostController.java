@@ -17,6 +17,13 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * This controller is to handle the forum posts.
+ * It is used to create new posts and get all posts.
+ * It is implemented as part of the forum context.
+ * @author Arian Rodriguez
+ * @version 1.0
+ * */
 @CrossOrigin("*")
 @RestController
 @RequestMapping(value="/api/v1/forum", produces = APPLICATION_JSON_VALUE)
@@ -30,6 +37,13 @@ public class PostController {
         this.postQueryService = postQueryService;
     }
 
+    /**
+     * POST method to create a new post.
+     * @param resource the resource to create a new post.
+     *                 It contains the title and the content of the post.
+     *                 It is a JSON object.
+     *
+     * */
     @PostMapping("/new-post")
     public ResponseEntity<Boolean> createPost(@RequestBody CreateNewPostResource resource) {
         var command = CreateNewPostCommandFromResourceAssembler.toCommandFromResource(resource);
