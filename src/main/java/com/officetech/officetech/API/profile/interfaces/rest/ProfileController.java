@@ -14,6 +14,12 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+/**
+ * This method is to edit a profile by id
+ * and return the updated profile
+ * @author Vladimir Jara
+ * @version 1.0
+ * */
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/profiles")
@@ -26,7 +32,15 @@ public class ProfileController {
         this.profileCommandService = profileCommandService;
     }
 
-    // edit by id
+    /**
+     * This method is to edit a profile by id
+     * and return the updated profile
+     * @param resource ProfileResource
+     *                 The profile resource
+     *                 to be updated
+     *                 in the database
+     *                 not null
+     * */
     @PutMapping("/{id}")
     public ResponseEntity<?> editProfile(@RequestBody ProfileResource resource) {
         try {

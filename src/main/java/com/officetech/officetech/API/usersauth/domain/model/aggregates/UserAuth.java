@@ -71,6 +71,11 @@ public class UserAuth extends AuditableAbstractAggregateRoot<UserAuth> {
         this.setCreatedAt();
         this.setUpdatedAt();
     }
+
+    public UserAuth(String email, String password) {
+        this.email = new Email(email);
+        this.password = new Password(password);
+    }
     public UserAuth(GetUserByEmailQuery query) {
         this.email = query.email();
     }
